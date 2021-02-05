@@ -1,0 +1,15 @@
+{% extends 'app/base.html' %}
+{% block content %}
+                {% for order in orders %}
+                    <div class="order">
+                    <p>user: {{ order.profile }}</p>
+                    <p>datetime: {{ order.datetime }}</p>
+                    <p>price: {{ order.price }} &euro;</p>
+                    <p>quantity: {{ order.quantity }}</p>
+                    <p>buy: {{ order.buy }}</p>
+                    <p>sell: {{ order.sell }}</p>
+                    <p>execute: {{ order.execute }}  </p>
+                    <p>profit: {{ order.profit }}  &euro;</p>
+                    </div>
+                {% endfor %}
+{% endblock %}
