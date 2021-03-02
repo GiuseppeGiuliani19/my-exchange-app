@@ -1,13 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Order, Wallet
 from .forms import RegisterForm, OrderForm, WalletForm
 from django.shortcuts import redirect
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 import random
 from django.http import JsonResponse
-from django.conf import settings
+from django.utils import timezone
 
 
 @login_required
@@ -17,13 +16,11 @@ def wallet_new(request):
         if request.method == "POST":
             form = WalletForm(request.POST)
             if form.is_valid():
-                new_wallet = form.save()
+                new_wallet = form.save(commit=False) #if you have a bug,erased and rewrite
                 new_wallet.profile = request.user
                 for wallet in wallets:
                     if wallet.profile == new_wallet.profile:
                            return render(request, 'app/error.html')
-                else:
-                           new_wallet.save()
                 return redirect('wallet')
         else:
             form = WalletForm()
@@ -31,53 +28,106 @@ def wallet_new(request):
         return render(request, 'app/wallet_new.html', contex)
 
 def wallet(request):
-    wallets = Wallet.objects.all()
-    orders = Order.objects.all().filter(execute=True).order_by('-datetime')
-    for wallet in wallets:
-        for order in orders:
-            if wallet.profile == order.profile and order.profit <= 0:
-                wallet.wallet += order.profit
-            elif wallet.profile == order.profile and order.profit >= 0:
-                wallet.wallet += order.profit
-    return render(request, 'app/wallet.html', {'wallets': wallets})
+       wallets = Wallet.objects.all()
+       orders = Order.objects.all().filter(execute=True, add_to_Wallet=False)
+       for wallet in wallets:
+            for order in orders:
+                if wallet.profile == order.profile and order.profit <= 0 and order.add_to_Wallet == False:
+                                wallet.budget += order.profit
+                                order.add_to_Wallet = True
+                                order.save()
+                                wallet.save()
+
+                elif wallet.profile == order.profile and order.profit > 0 and order.add_to_Wallet == False:
+                                wallet.budget += order.profit
+                                order.add_to_Wallet = True
+                                order.save()
+                                wallet.save()
+
+       return render(request, 'app/wallet.html', {'wallets': wallets})
 
 #method to do new order
 @login_required
 def order_new(request):
+    orders = Order.objects.all()
     wallets = Wallet.objects.all()
     form = OrderForm()
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            new_order = form.save()
-            if request.method == "POST":
-               if new_order.buy is True:
-                    sell_Order = Order.objects.filter(sell=True, execute=False, price__lte=new_order.price).first()
-                    if sell_Order != None:
-                        profit_Bitcoin = new_order.quantity
-                        profit_Buy = new_order.price
-                        new_order.quantity = profit_Bitcoin
-                        sell_Order.quantity = -profit_Bitcoin
-                        new_order.profit = -profit_Buy
-                        sell_Order.profit = profit_Buy
-                        new_order.execute = True
-                        sell_Order.execute = True
-                        sell_Order.save()
-                    else:
-                        new_order.save()
-               else:
-                    buy_Order = Order.objects.filter(buy=True, execute=False, price__gte=new_order.price).first()
-                    if buy_Order != None:
-                        profit_Sell = buy_Order.price - new_order.price
-                        new_order.profit = profit_Sell
-                        new_order.execute = True
-                        buy_Order.execute = True
-                        buy_Order.save()
-                    else:
-                         new_order.save()
-               new_order.profile = request.user
-               new_order.save()
-               return redirect('orders')
+            new_order = form.save(commit=False) #if you have a bug,erased and rewrite
+            for wallet in wallets:
+                for order in orders:
+                   if new_order.choice == ('buy') and new_order.price <= wallet.budget and \
+                           new_order.prenotation=='False':
+                            sell_Order = Order.objects.filter(prenotation='False', choice='sell', execute=False,
+                                                              price__lte=new_order.price).first()
+                            if sell_Order != None:
+                                profit_Bitcoin = new_order.quantity
+                                profit_Buy = new_order.price
+                                new_order.quantity = profit_Bitcoin
+                                sell_Order.quantity = -profit_Bitcoin
+                                new_order.profit = -profit_Buy
+                                sell_Order.profit = profit_Buy
+                                new_order.execute = True
+                                sell_Order.execute = True
+                                sell_Order.date_executed = timezone.now()
+                                sell_Order.save()
+                            else:
+                                new_order.save()
+                   #elif new_order.choice == ('sell') or new_order.choice == ('buy') and new_order.prenotation !='False':
+                    #   for order in orders:
+                     #       if new_order.prenotation != any(orders):
+                      #             return render(request, 'app/error_name.html')
+                   elif new_order.choice == ('buy') and new_order.price <= wallet.budget\
+                       and new_order.prenotation != 'False':
+                       sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell', execute=False,
+                                                         price__lte=new_order.price).first()
+                       if sell_Order != None and new_order.prenotation==str(order.profile):
+                           profit_Bitcoin = new_order.quantity
+                           profit_Buy = new_order.price
+                           new_order.quantity = profit_Bitcoin
+                           sell_Order.quantity = -profit_Bitcoin
+                           new_order.profit = -profit_Buy
+                           sell_Order.profit = profit_Buy
+                           new_order.execute = True
+                           sell_Order.execute = True
+                           sell_Order.save()
+
+                   elif new_order.choice == ('buy') and new_order.price > wallet.budget:
+                       return render(request, 'app/error_order.html')
+                   elif new_order.choice == ('sell')   and new_order.prenotation != 'False':
+                            buy_Order = Order.objects.filter(prenotation=new_order.profile, choice='buy', execute=False,
+                                                             price__gte=new_order.price).first()
+                            if buy_Order != None and new_order.prenotation==str(order.profile):
+                                profit_Sell = buy_Order.price
+                                new_order.quantity = -new_order.quantity
+                                new_order.profit = profit_Sell
+                                new_order.execute = True
+                                buy_Order.date_executed = timezone.now()
+                                buy_Order.execute = True
+                                buy_Order.profit = -buy_Order.price
+                                buy_Order.save()
+                            else:
+                                 new_order.save()
+                   elif new_order.choice == ('sell')   and new_order.prenotation == 'False':
+                            buy_Order = Order.objects.filter(prenotation='False', choice='buy', execute=False,
+                                                             price__gte=new_order.price).first()
+                            if buy_Order != None:
+                                profit_Sell = buy_Order.price
+                                new_order.quantity = -new_order.quantity
+                                new_order.profit = profit_Sell
+                                new_order.execute = True
+                                buy_Order.date_executed = timezone.now()
+                                buy_Order.execute = True
+                                buy_Order.profit = -buy_Order.price
+                                buy_Order.save()
+                            else:
+                                 new_order.save()
+                   new_order.profile = request.user
+                   new_order.save()
+                   return redirect('orders')
+
     else:
               form = OrderForm()
     contex = {'form': form}
@@ -101,6 +151,7 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, "app/register.html", {"form": form})
+
 
 def bitcoins_users(request):
     random.seed(999)
@@ -149,23 +200,5 @@ def profit_or_loss_bitcoins(request):
                      )
     return JsonResponse(response, safe=False)
 
-# def balance(request):
-#     orders = Order.objects.all().filter(execute=True).order_by('-datetime')
-#     users = User.objects.all()
-#     balance = 0
-#     response = []
-#     for user in users:
-#         for order in orders:
-#             if user.username == order.profile.username:
-#                      # balance -= order.profit
-#                      balance += order.profit
-#                      # balance.append(order.profit)
-#                      # all_balance = sum(balance)
-#                      response.append(
-#                          {
-#                               user.username:  balance,
-#                          }
-#                      )
-#
-#     return JsonResponse(response, safe=False)
+
 

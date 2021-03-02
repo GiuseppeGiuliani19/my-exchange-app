@@ -3,9 +3,9 @@
 {% block content %}
       <h2>Wallets</h2>
                      {% for wallet in wallets %}
-                    <div class="order">
-                    <p>user: {{ wallet.profile }}</p>
-                    <p>wallet: {{ wallet.wallet }} &euro;</p>
+                    <div class="wallet">
+                        <h2>user: {{ wallet.profile }}</h2>
+                    <p>budget: {{ wallet.budget }} &euro;</p>
                     </div>
                 {% endfor %}
 
