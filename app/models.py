@@ -24,3 +24,4 @@ class Order(models.Model):
     date_executed = models.DateTimeField(auto_now_add=True)
     profit = models.FloatField(default=0)
     add_to_Wallet = models.BooleanField(blank=True, default=False)
+

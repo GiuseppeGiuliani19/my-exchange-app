@@ -75,10 +75,6 @@ def order_new(request):
                                 sell_Order.save()
                             else:
                                 new_order.save()
-                   #elif new_order.choice == ('sell') or new_order.choice == ('buy') and new_order.prenotation !='False':
-                    #   for order in orders:
-                     #       if new_order.prenotation != any(orders):
-                      #             return render(request, 'app/error_name.html')
                    elif new_order.choice == ('buy') and new_order.price <= wallet.budget\
                        and new_order.prenotation != 'False':
                        sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell', execute=False,
