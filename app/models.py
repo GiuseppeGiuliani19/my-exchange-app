@@ -1,15 +1,12 @@
 from django.db import models
-from djongo.models.fields import ObjectIdField
 from django.contrib.auth.models import User
 from django.conf import settings
 
 class Wallet(models.Model):
-    _id = ObjectIdField()
     profile = models.ForeignKey(User, on_delete=models.CASCADE)
     budget = models.FloatField()
 
 class Order(models.Model):
-    _id = ObjectIdField()
     profile = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     datetime = models.DateTimeField(auto_now_add=True)
     price = models.FloatField()
