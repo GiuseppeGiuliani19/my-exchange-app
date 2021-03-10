@@ -1,6 +1,8 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
+<a href="/">HOME</a> <h3>            </h3>
+<a href="/orders_executed">ORDERS EXECUTED</a>
       <h2>Wallets</h2>
                      {% for wallet in wallets %}
                     <div class="wallet">
@@ -8,5 +10,4 @@
                     <p>budget: {{ wallet.budget }} &euro;</p>
                     </div>
                 {% endfor %}
-
 {% endblock %}

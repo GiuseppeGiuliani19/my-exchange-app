@@ -30,5 +30,7 @@ urlpatterns = [
     path('profit_or_loss_users', views.profit_or_loss_moneys, name='profit_or_loss'),
     path('profit_or_loss_bitcoins', views.profit_or_loss_bitcoins, name='profit_or_loss_bitcoins'),
     #wallet
-    path('wallet', views.wallet, name='wallet')
+    path('wallet', views.wallet, name='wallet'),
+    #tutorial
+    path('tutorial', views.tutorial, name='tutorial')
 ]

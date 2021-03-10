@@ -78,7 +78,9 @@ WSGI_APPLICATION = 'exchange.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'engine',
+       # 'NAME': 'engine',
+        'NAME': 'a1',
+
     }
 }
 
@@ -124,5 +126,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/tutorial'
 LOGOUT_REDIRECT_URL = "/"
