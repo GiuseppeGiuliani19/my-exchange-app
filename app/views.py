@@ -16,14 +16,17 @@ def wallet_new(request):
         form = WalletForm()
         if request.method == "POST":
             form = WalletForm(request.POST)
-            if form.is_valid():
-                new_wallet = form.save() #if you have a bug,erased and rewrite
-                new_wallet.profile = request.user
-              #  wallets = Wallet.objects.filter(profile=wallet.profile)
-              #  for wallet in wallets:
-               #     if wallet.profile == new_wallet.profile:
-                #           return render(request, 'app/error.html')
-                return redirect('wallet')
+            new_wallet = form
+            new_wallet.profile = request.user
+            for wallet in wallets:
+                if form.is_valid() and wallet.profile != new_wallet.profile:
+                        new_wallet = form.save()
+                        new_wallet.profile = request.user
+                else:
+
+                                new_wallet.delete()
+                                return render(request, 'app/error.html')
+            return redirect('wallet')
         else:
             form = WalletForm()
         contex = {'form': form}
@@ -57,12 +60,12 @@ def order_new(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            new_order = form.save()#if you have a bug,erased and rewrite
-            #return redirect('orders_accepted.html')
+            new_order = form.save()
             for wallet in wallets:
                 for order in orders:
                    if new_order.choice == ('buy') and new_order.price <= wallet.budget and \
                            new_order.prenotation == 'False':
+                          #  new_order.save()
                             sell_Order = Order.objects.filter(prenotation='False', choice='sell', order_close=False,
                                                               price__lte=new_order.price).first()
                             if sell_Order != None:
@@ -80,6 +83,7 @@ def order_new(request):
                                 new_order.save()
                    elif new_order.choice == ('buy') and new_order.price <= wallet.budget\
                        and new_order.prenotation != 'False':
+                     #  new_order.save()
                        sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell', order_close=False,
                                                          price__lte=new_order.price).first()
                        if sell_Order != None and new_order.prenotation==str(order.profile):
@@ -96,6 +100,7 @@ def order_new(request):
                    elif new_order.choice == ('buy') and new_order.price > wallet.budget:
                        return render(request, 'app/error_order.html')
                    elif new_order.choice == ('sell')   and new_order.prenotation != 'False':
+                         #   new_order.save()
                             buy_Order = Order.objects.filter(prenotation=new_order.profile, choice='buy', order_close=False,
                                                              price__gte=new_order.price).first()
                             if buy_Order != None and new_order.prenotation==str(order.profile):
@@ -110,6 +115,7 @@ def order_new(request):
                             else:
                                  new_order.save()
                    elif new_order.choice == ('sell')   and new_order.prenotation == 'False':
+                        #    new_order.save()
                             buy_Order = Order.objects.filter(prenotation='False', choice='buy', order_close=False,
                                                              price__gte=new_order.price).first()
                             if buy_Order != None:
