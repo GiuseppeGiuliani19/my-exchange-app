@@ -1,0 +1,24 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<h3>Ordine effettuato con successo!</h3>
+        {% if last_order.order_close == True and last_order.choice == 'sell'%}
+         <h3>Ordine chiuso!Hai appena venduto il tuo ordine.</h3>
+        {% elif last_order.order_close == True and last_order.choice == 'buy'%}
+        <h3>Ordine chiuso!Sei riuscito ad acquistare un ordine.</h3>
+        {% elif last_order.order_close == False and last_order.choice == 'sell'%}
+        <h3>Ordine aperto, visualizzalo nella home</h3>
+        {% elif last_order.order_close == False and last_order.choice == 'buy'%}
+         <h3>Ordine aperto, visualizzalo nella home</h3>
+        {% endif %}
+<div class="last_order">
+                    <p>user: {{ last_order.profile }}</p>
+                    <p>datetime: {{ last_order.datetime }}</p>
+                    <p>price: {{ last_order.price }} &euro;</p>
+                    <p>quantity: {{ last_order.quantity }}</p>
+                    <p>choice: {{ last_order.choice }}</p>
+                    <p>close: {{ last_order.order_close}}  </p>
+                    <p>prenotation: {{ last_order.prenotation }}</p>
+                    <p>profit: {{ last_order.profit }}  &euro;</p>
+</div>
+<h3></h3>
+{% endblock %}

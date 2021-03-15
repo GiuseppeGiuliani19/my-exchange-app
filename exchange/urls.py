@@ -32,5 +32,9 @@ urlpatterns = [
     #wallet
     path('wallet', views.wallet, name='wallet'),
     #tutorial
-    path('tutorial', views.tutorial, name='tutorial')
+    path('tutorial', views.tutorial, name='tutorial'),
+    path('response_order_executed', views.response_order_executed, name='response_order_executed'),
+    path('response_wallet_executed', views.response_wallet_executed, name='response_wallet_executed'),
+  #  path('your_orders_executed', views.your_order_executed, name='your_orders_executed'),
+
 ]

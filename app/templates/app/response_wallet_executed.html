@@ -1,0 +1,11 @@
+{% extends 'app/base.html' %}
+{% block content %}
+<h3>Wallet creato con successo!</h3>
+
+<div class="last_wallet">
+                    <p>user: {{ last_wallet.profile }}</p>
+                    <p>datetime: {{ last_wallet.datetime }}</p>
+                    <p>budget: {{ last_wallet.budget }} &euro;</p>
+</div>
+<h3></h3>
+{% endblock %}

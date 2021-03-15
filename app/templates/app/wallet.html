@@ -1,13 +1,12 @@
 {% extends 'app/base.html' %}
 
 {% block content %}
-<a href="/">HOME</a> <h3>            </h3>
-<a href="/orders_executed">ORDERS EXECUTED</a>
       <h2>Wallets</h2>
                      {% for wallet in wallets %}
                     <div class="wallet">
                         <h2>user: {{ wallet.profile }}</h2>
                     <p>budget: {{ wallet.budget }} &euro;</p>
+                        <p>created date: {{ wallet.datetime }}</p>
                     </div>
                 {% endfor %}
 {% endblock %}

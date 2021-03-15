@@ -1,22 +1,29 @@
 {% load static %}
 <html>
     <head>
-        <title>Exchange</title>
+        <title>Exchange crypto</title>
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-
-        <link rel="stylesheet" href="{% static 'css/app.css' %}">
+        <link href='//fonts.googleapis.com/css?family=Monospace&subset=Arial,Arial-ext' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/css2.css' %}">
     </head>
         <body>
       <div class="page-header">
         {% if user.is_authenticated %}
             <a href="{% url 'order_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-            <a href="{% url 'wallet_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+            <a href="{% url 'wallet_new' %}" class="top-menu"><span class="glyphicon glyphicon-euro"></span></a>
             <p class="top-menu">Welcome {{ user.username }} <small>(<a href="{% url 'logout' %}">Log out</a>)</small></p>
-        {% else %}
+          {% else %}
             <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
         {% endif %}
-        <h1><a href="/">Exchange</a></h1>
+        <h1><a href="/">Exchange crypto</a></h1>
+          <a href="/profit_or_loss_bitcoins" class="menu">PROFIT LOSS BITCOIN</a>
+          <a href="/profit_or_loss_users" class="menu">PROFIT LOSS USERS</a>
+          <a href="/wallet" class="menu">WALLETS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/orders_executed" class="menu">ORDERS EXECUTED</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/tutorial" class="menu">TUTORIAL</a>
+          <a href="/" class="menu">HOME</a>
+
     </div>
     <div class="content container">
         <div class="row">

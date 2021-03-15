@@ -1,8 +1,5 @@
 {% extends 'app/base.html' %}
 {% block content %}
-                <h1></h1><h3>           </h3> <a href="/wallet">WALLETS</a><h3>           </h3>
-                 <a href="/">HOME</a> <h3>           </h3> <a href="/tutorial">TUTORIAL</a>
-                 <h2></h2>
                 <h1>Ordini chiusi: </h1>
                 {% for order in orders_executed %}
                     <div class="order">
@@ -13,7 +10,7 @@
                     <p>choice: {{ order.choice }}</p>
                     <p>datetime executed: {{order.date_executed}}</p>
                     <p>prenotation: {{order.prenotation}}</p>
-                    <p>execute: {{ order.execute }}</p>
+                    <p>execute: {{ order.order_close }}</p>
                     <p>profit: {{ order.profit }} &euro;</p>
                     </div>
                 {% endfor %}

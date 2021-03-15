@@ -8,6 +8,17 @@ import random
 from django.http import JsonResponse
 from django.utils import timezone
 
+#this function is used to represent the newly created wallet
+def response_wallet_executed(request):
+    wallets = list(Wallet.objects.all())
+    last_wallet = wallets[-1]
+    return render(request, 'app/response_wallet_executed.html', {'last_wallet': last_wallet})
+#this function is used to represent the newly created order
+def response_order_executed(request):
+    orders = list(Order.objects.all())
+    last_order = orders[-1]
+    return render(request, 'app/response_order_executed.html', {'last_order': last_order})
+
 def tutorial(request):
     return render(request, 'app/tutorial.html')
 @login_required
@@ -16,22 +27,18 @@ def wallet_new(request):
         form = WalletForm()
         if request.method == "POST":
             form = WalletForm(request.POST)
-            new_wallet = form
-            new_wallet.profile = request.user
+            form.profile = request.user
             for wallet in wallets:
-                if form.is_valid() and wallet.profile != new_wallet.profile:
-                        new_wallet = form.save()
-                        new_wallet.profile = request.user
-                else:
-
-                                new_wallet.delete()
-                                return render(request, 'app/error.html')
-            return redirect('wallet')
+                if form.profile == wallet.profile:
+                    return render(request, 'app/error.html')
+            if form.is_valid():
+                        form.save()
+            return redirect('response_wallet_executed')
         else:
             form = WalletForm()
         contex = {'form': form}
         return render(request, 'app/wallet_new.html', contex)
-
+#update the balance of wallet
 def wallet(request):
        wallets = Wallet.objects.all()
        orders = Order.objects.all().filter(order_close=True, add_to_Wallet=False)
@@ -65,7 +72,6 @@ def order_new(request):
                 for order in orders:
                    if new_order.choice == ('buy') and new_order.price <= wallet.budget and \
                            new_order.prenotation == 'False':
-                          #  new_order.save()
                             sell_Order = Order.objects.filter(prenotation='False', choice='sell', order_close=False,
                                                               price__lte=new_order.price).first()
                             if sell_Order != None:
@@ -83,39 +89,43 @@ def order_new(request):
                                 new_order.save()
                    elif new_order.choice == ('buy') and new_order.price <= wallet.budget\
                        and new_order.prenotation != 'False':
-                     #  new_order.save()
-                       sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell', order_close=False,
+                       sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell',
+                                                         order_close=False,
                                                          price__lte=new_order.price).first()
-                       if sell_Order != None and new_order.prenotation==str(order.profile):
-                           profit_Bitcoin = new_order.quantity
-                           profit_Buy = new_order.price
-                           new_order.quantity = profit_Bitcoin
-                           sell_Order.quantity = -profit_Bitcoin
-                           new_order.profit = -profit_Buy
-                           sell_Order.profit = profit_Buy
-                           new_order.order_close = True
-                           sell_Order.order_close = True
-                           sell_Order.save()
+                     #  for order in sell_Order:
+                       if sell_Order != None and new_order.prenotation == str(sell_Order.profile):
+                                   profit_Bitcoin = new_order.quantity
+                                   profit_Buy = new_order.price
+                                   new_order.quantity = profit_Bitcoin
+                                   sell_Order.quantity = -profit_Bitcoin
+                                   new_order.profit = -profit_Buy
+                                   sell_Order.profit = profit_Buy
+                                   new_order.order_close = True
+                                   sell_Order.order_close = True
+                                   sell_Order.save()
+                       else:
+                                   new_order.save()
 
                    elif new_order.choice == ('buy') and new_order.price > wallet.budget:
+                       new_order.delete()
                        return render(request, 'app/error_order.html')
                    elif new_order.choice == ('sell')   and new_order.prenotation != 'False':
-                         #   new_order.save()
-                            buy_Order = Order.objects.filter(prenotation=new_order.profile, choice='buy', order_close=False,
+                            buy_Order = Order.objects.filter(prenotation=str(new_order.profile), choice='buy',
+                                                             order_close=False,
                                                              price__gte=new_order.price).first()
-                            if buy_Order != None and new_order.prenotation==str(order.profile):
-                                profit_Sell = buy_Order.price
-                                new_order.quantity = -new_order.quantity
-                                new_order.profit = profit_Sell
-                                new_order.order_close = True
-                                buy_Order.date_executed = timezone.now()
-                                buy_Order.order_close = True
-                                buy_Order.profit = -buy_Order.price
-                                buy_Order.save()
+                           # for order in buy_Order:
+                            if buy_Order != None and new_order.prenotation == str(buy_Order.profile):
+                                        profit_Sell = buy_Order.price
+                                        new_order.quantity = -new_order.quantity
+                                        new_order.profit = profit_Sell
+                                        new_order.order_close = True
+                                        buy_Order.date_executed = timezone.now()
+                                        buy_Order.order_close = True
+                                        buy_Order.profit = -buy_Order.price
+                                        buy_Order.save()
                             else:
-                                 new_order.save()
+                                         new_order.save()
                    elif new_order.choice == ('sell')   and new_order.prenotation == 'False':
-                        #    new_order.save()
                             buy_Order = Order.objects.filter(prenotation='False', choice='buy', order_close=False,
                                                              price__gte=new_order.price).first()
                             if buy_Order != None:
@@ -131,7 +141,7 @@ def order_new(request):
                                  new_order.save()
                    new_order.profile = request.user
                    new_order.save()
-                   return redirect('orders')
+                   return redirect('response_order_executed')
 
     else:
               form = OrderForm()
@@ -174,7 +184,7 @@ def bitcoins_users(request):
     return JsonResponse(response, safe=False)
 
 def profit_or_loss_moneys(request):
-    orders = Order.objects.all().filter(execute=True).order_by('-datetime')
+    orders = Order.objects.all().filter(order_close=True).order_by('-datetime')
     users = User.objects.all()
     response = []
     for user in users:
@@ -191,7 +201,7 @@ def profit_or_loss_moneys(request):
 
 
 def profit_or_loss_bitcoins(request):
-    orders = Order.objects.all().filter(execute=True).order_by('-datetime')
+    orders = Order.objects.all().filter(order_close=True).order_by('-datetime')
     users = User.objects.all()
     response = []
     for user in users:
@@ -204,6 +214,21 @@ def profit_or_loss_bitcoins(request):
                          }
                      )
     return JsonResponse(response, safe=False)
+
+# def your_order_executed(request):
+#    # orders = Order.objects.filter
+#     wallets = Wallet.objects.all()
+#     users = User.objects.all()
+#     orders = Order.objects.all()
+#     for wallet in wallets:
+#     #for order in orders:
+#          for user in users:
+#                  #  orders = Order.objects.filter(profile=user.id)
+#             #if user. == order.profile:
+#                    for order in orders:
+#                              your_order = Order.objects.filter(profile=wallet.profile)
+#                              return render(request, "app/your_order_executed.html", {"your_order": your_order})
+
 
 
 

@@ -1,8 +1,5 @@
 {% extends 'app/base.html' %}
 {% block content %}
-                <h1></h1><h3>           </h3> <a href="/wallet">WALLETS</a><h3>           </h3>
-                 <a href="/orders_executed">ORDERS EXECUTED</a> <h3>           </h3> <a href="/tutorial">TUTORIAL</a>
-                 <h2></h2>
                 <h1>Ordini aperti: </h1>
                 {% for order in orders %}
                 <div class="order">
@@ -17,3 +14,5 @@
                 </div>
                 {% endfor %}
 {% endblock %}
+
+

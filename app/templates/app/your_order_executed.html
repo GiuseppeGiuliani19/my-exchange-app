@@ -1,0 +1,20 @@
+{% extends 'app/base.html' %}
+{% block content %}
+                <h1>Your orders executed: </h1>
+                {% if user.is_authenticated  %}
+                        {% for order in your_order %}
+
+                                <div class="order">
+                                    <p>user: {{ order.profile }}</p>
+                                    <p>datetime: {{ order.datetime }}</p>
+                                    <p>price: {{ order.price }} &euro;</p>
+                                    <p>quantity: {{ order.quantity }}</p>
+                                    <p>choice: {{ order.choice }}</p>
+                                    <p>close: {{ order.order_close}}  </p>
+                                    <p>prenotation: {{order.prenotation}}</p>
+                                    <p>profit: {{ order.profit }}  &euro;</p>
+                                </div>
+
+                        {% endfor %}
+               {% endif %}
+{% endblock %}
