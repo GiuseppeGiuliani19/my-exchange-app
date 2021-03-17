@@ -73,7 +73,8 @@ def order_new(request):
                    if new_order.choice == ('buy') and new_order.price <= wallet.budget and \
                            new_order.prenotation == 'False':
                             sell_Order = Order.objects.filter(prenotation='False', choice='sell', order_close=False,
-                                                              price__lte=new_order.price).first()
+                                                              price__lte=new_order.price,
+                                                              choise_crypto=new_order.choise_crypto).first()
                             if sell_Order != None:
                                 profit_Bitcoin = new_order.quantity
                                 profit_Buy = new_order.price
@@ -91,7 +92,8 @@ def order_new(request):
                        and new_order.prenotation != 'False':
                        sell_Order = Order.objects.filter(prenotation=new_order.profile, choice='sell',
                                                          order_close=False,
-                                                         price__lte=new_order.price).first()
+                                                         price__lte=new_order.price,
+                                                         choise_crypto=new_order.choise_crypto).first()
                      #  for order in sell_Order:
                        if sell_Order != None and new_order.prenotation == str(sell_Order.profile):
                                    profit_Bitcoin = new_order.quantity
@@ -112,7 +114,8 @@ def order_new(request):
                    elif new_order.choice == ('sell')   and new_order.prenotation != 'False':
                             buy_Order = Order.objects.filter(prenotation=str(new_order.profile), choice='buy',
                                                              order_close=False,
-                                                             price__gte=new_order.price).first()
+                                                             price__gte=new_order.price,
+                                                             choise_crypto=new_order.choise_crypto).first()
                            # for order in buy_Order:
                             if buy_Order != None and new_order.prenotation == str(buy_Order.profile):
                                         profit_Sell = buy_Order.price
@@ -127,7 +130,8 @@ def order_new(request):
                                          new_order.save()
                    elif new_order.choice == ('sell')   and new_order.prenotation == 'False':
                             buy_Order = Order.objects.filter(prenotation='False', choice='buy', order_close=False,
-                                                             price__gte=new_order.price).first()
+                                                             price__gte=new_order.price,
+                                                             choise_crypto=new_order.choise_crypto).first()
                             if buy_Order != None:
                                 profit_Sell = buy_Order.price
                                 new_order.quantity = -new_order.quantity
@@ -200,7 +204,7 @@ def profit_or_loss_moneys(request):
     return JsonResponse(response, safe=False)
 
 
-def profit_or_loss_bitcoins(request):
+def profit_or_loss_crypto(request):
     orders = Order.objects.all().filter(order_close=True).order_by('-datetime')
     users = User.objects.all()
     response = []
@@ -210,6 +214,7 @@ def profit_or_loss_bitcoins(request):
                      response.append(
                          {
                               user.username:  order.quantity,
+                             'crypto': order.choise_crypto,
                              'datetime': order.datetime,
                          }
                      )

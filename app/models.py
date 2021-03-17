@@ -21,6 +21,13 @@ class Order(models.Model):
     )
     #this parameter indicates  the user's choice : buy or sell
     choice = models.CharField(max_length=10, choices=BUY_SELL_CHOICES)
+    crypto_currencies_choice = (
+        ('btc', 'BTC'),
+        ('ada', 'ADA'),
+        ('eth', 'ETH'),
+        ('dot', 'DOT')
+    )
+    choise_crypto = models.CharField(max_length=20, choices=crypto_currencies_choice)
     #this parameter is used if someone wants to make private orders
     prenotation = models.CharField(max_length=30, default=False)
     #this parameter indicates that order is open or not,if it is open the parameter equal false

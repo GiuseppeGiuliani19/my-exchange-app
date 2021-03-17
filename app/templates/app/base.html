@@ -12,15 +12,17 @@
         {% if user.is_authenticated %}
             <a href="{% url 'order_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
             <a href="{% url 'wallet_new' %}" class="top-menu"><span class="glyphicon glyphicon-euro"></span></a>
-            <p class="top-menu">Welcome {{ user.username }} <small>(<a href="{% url 'logout' %}">Log out</a>)</small></p>
+            <p class="top-menu">Welcome {{ user.username }} <small>
+                <a href="{% url 'logout' %}">Log out</a></small></p>
           {% else %}
             <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
         {% endif %}
         <h1><a href="/">Exchange crypto</a></h1>
-          <a href="/profit_or_loss_bitcoins" class="menu">PROFIT LOSS BITCOIN</a>
+
+          <a href="/profit_or_loss_crypto" class="menu">PROFIT LOSS CRYPTO</a>
           <a href="/profit_or_loss_users" class="menu">PROFIT LOSS USERS</a>
           <a href="/wallet" class="menu">WALLETS</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <a href="/orders_executed" class="menu">ORDERS EXECUTED</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="/orders_executed" class="menu">ORDERS EXECUTED</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           <a href="/tutorial" class="menu">TUTORIAL</a>
           <a href="/" class="menu">HOME</a>
 

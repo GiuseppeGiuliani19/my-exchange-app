@@ -10,7 +10,7 @@ class WalletForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ('profile', 'price', 'quantity', 'choice', 'prenotation')
+        fields = ('profile', 'price', 'quantity', 'choice', 'choise_crypto', 'prenotation')
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()

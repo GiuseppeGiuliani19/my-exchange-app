@@ -28,7 +28,7 @@ urlpatterns = [
     path('bitcoins_users', views.bitcoins_users, name="bitcoins_users"),
     #storic of transactions
     path('profit_or_loss_users', views.profit_or_loss_moneys, name='profit_or_loss'),
-    path('profit_or_loss_bitcoins', views.profit_or_loss_bitcoins, name='profit_or_loss_bitcoins'),
+    path('profit_or_loss_crypto', views.profit_or_loss_crypto, name='profit_or_loss_bitcoins'),
     #wallet
     path('wallet', views.wallet, name='wallet'),
     #tutorial
