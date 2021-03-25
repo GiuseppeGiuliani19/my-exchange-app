@@ -205,7 +205,7 @@ def profit_or_loss_moneys(request):
 
 
     return HttpResponse(response, content_type="text/plain")
-
+    #return json.dumps(response, indent=4, sort_keys=True, default=str)
 
 def profit_or_loss_crypto(request):
     orders = Order.objects.all().filter(order_close=True).order_by('-datetime')
