@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 import random
 from django.http import JsonResponse
 from django.utils import timezone
+import json
+from django.http import HttpResponse
 
 #this function is used to represent the newly created wallet
 def response_wallet_executed(request):
@@ -20,7 +22,7 @@ def response_order_executed(request):
     return render(request, 'app/response_order_executed.html', {'last_order': last_order})
 
 def tutorial(request):
-    return render(request, 'app/tutorial.html')
+    return render(request, 'app/Tutorial.html')
 @login_required
 def wallet_new(request):
         wallets = Wallet.objects.all()
@@ -201,7 +203,8 @@ def profit_or_loss_moneys(request):
                          }
                      )
 
-    return JsonResponse(response, safe=False)
+
+    return HttpResponse(response, content_type="text/plain")
 
 
 def profit_or_loss_crypto(request):
@@ -218,7 +221,8 @@ def profit_or_loss_crypto(request):
                              'datetime': order.datetime,
                          }
                      )
-    return JsonResponse(response, safe=False)
+   # return JsonResponse(response, safe=False)
+    return HttpResponse(response, content_type="text/plain")
 
 # def your_order_executed(request):
 #    # orders = Order.objects.filter
