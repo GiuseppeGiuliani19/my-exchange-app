@@ -2,6 +2,8 @@
 
 {% block content %}
      <h2>New wallet</h2>
+     <strong>Puoi inserire massimo 5 cifre decimali</strong>
+
      <form method="POST" class="post-form">
          {% csrf_token %}
          {{ form.as_p }}

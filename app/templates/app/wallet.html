@@ -5,7 +5,11 @@
                      {% for wallet in wallets %}
                     <div class="wallet">
                         <h2>user: {{ wallet.profile }}</h2>
-                    <p>budget: {{ wallet.budget }} &euro;</p>
+                        <p>fiat budget: {{ wallet.fiat_budget }} &euro;</p>
+                        <p>btc budget: {{ wallet.btc_budget }} btc</p>
+                        <p>eth budget: {{ wallet.eth_budget }} eth</p>
+                        <p>dot budget: {{ wallet.dot_budget }} dot</p>
+                        <p>ada budget: {{ wallet.ada_budget }} ada</p>
                         <p>created date: {{ wallet.datetime }}</p>
                     </div>
                 {% endfor %}

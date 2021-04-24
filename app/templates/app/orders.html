@@ -1,8 +1,10 @@
 {% extends 'app/base.html' %}
 {% block content %}
+
                 <h1>Ordini aperti: </h1>
                 {% for order in orders %}
                 <div class="order">
+                    <p>numero ordine: {{ forloop.counter }}</p>
                     <p>user: {{ order.profile }}</p>
                     <p>datetime: {{ order.datetime }}</p>
                     <p>price: {{ order.price }} &euro;</p>

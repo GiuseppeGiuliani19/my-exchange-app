@@ -6,11 +6,11 @@ from django.contrib.auth.models import User
 class WalletForm(forms.ModelForm):
     class Meta:
         model = Wallet
-        fields = ('profile', 'budget')
+        fields = ('profile', 'fiat_budget', 'btc_budget', 'eth_budget', 'dot_budget', 'ada_budget')
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ('profile', 'price', 'quantity', 'choice', 'choise_crypto', 'prenotation')
+        fields = ('price', 'quantity', 'choice', 'choise_crypto', 'prenotation')
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField()
