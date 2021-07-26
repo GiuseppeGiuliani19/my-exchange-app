@@ -78,7 +78,6 @@ WSGI_APPLICATION = 'exchange.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-       # 'NAME': 'engine',
         'NAME': 'a1',
 
     }
@@ -128,3 +127,6 @@ STATIC_URL = '/static/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = '/tutorial'
 LOGOUT_REDIRECT_URL = "/"
+AUTHENTICATION_BACKENDS = (
+    ('django.contrib.auth.backends.ModelBackend'),
+)

@@ -41,18 +41,12 @@ def wallet_new(request):
     if request.method == "POST":
         form = WalletForm(request.POST)
         for wallet in wallets:
-            if request.user == wallet.profile:
-                wallet.delete()
+            if request.user == form:
+                form.delete()
                 return render(request, 'app/error.html')
         if form.is_valid():
             form.save()
-            form = Wallet.objects.create(profile=request.user,
-                                         datetime=wallet.datetime,
-                                         fiat_budget=wallet.fiat_budget,
-                                         btc_budget=wallet.btc_budget,
-                                         eth_budget=wallet.eth_budget,  # ---->metodo sbagliato
-                                         dot_budget=wallet.dot_budget,
-                                         ada_budget=wallet.ada_budget)
+
             #        form.save()
         return redirect('response_wallet_executed')
     else:
