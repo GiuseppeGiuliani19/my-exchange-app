@@ -37,7 +37,6 @@ def tutorial(request):
 def wallet_new(request):
     wallets = Wallet.objects.all()
     form = WalletForm()
-    # new_wallet = Wallet.objects.create()
     if request.method == "POST":
         form = WalletForm(request.POST)
         for wallet in wallets:
@@ -45,7 +44,10 @@ def wallet_new(request):
                 form.delete()
                 return render(request, 'app/error.html')
         if form.is_valid():
-            form.save()
+
+            new_wallet = form.save()
+            new_wallet.profile = request.user
+            new_wallet = form.save()
 
             #        form.save()
         return redirect('response_wallet_executed')
@@ -131,6 +133,8 @@ def order_new(request):
         form = OrderForm(request.POST)
         form.profile = request.user
         if form.is_valid():
+            new_order = form.save()
+            new_order.profile = request.user
             new_order = form.save()
             for wallet in wallets:
                 for order in orders:
@@ -225,7 +229,6 @@ def order_new(request):
                             buy_Order.save()
                         else:
                             new_order.save()
-            new_order.save()
             return redirect('response_order_executed')
 
     form = OrderForm()

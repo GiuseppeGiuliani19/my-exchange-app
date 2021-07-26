@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class WalletForm(forms.ModelForm):
     class Meta:
         model = Wallet
-        fields = ('profile', 'fiat_budget', 'btc_budget', 'eth_budget', 'dot_budget', 'ada_budget')
+        fields = ('fiat_budget', 'btc_budget', 'eth_budget', 'dot_budget', 'ada_budget')
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order

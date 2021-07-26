@@ -79,7 +79,6 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'a1',
-
     }
 }
 
