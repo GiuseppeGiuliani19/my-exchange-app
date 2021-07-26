@@ -12,9 +12,6 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 
 
-# client = redis.StrictRedis(port=6379, db=0)
-
-
 # this function is used to represent the newly created wallet
 def response_wallet_executed(request):
     wallets = list(Wallet.objects.all())
@@ -40,8 +37,9 @@ def wallet_new(request):
     if request.method == "POST":
         form = WalletForm(request.POST)
         for wallet in wallets:
-            if request.user == form:
-                form.delete()
+            if request.user == wallet.profile:
+                wallet_to_delete = form.save()
+                wallet_to_delete.delete()
                 return render(request, 'app/error.html')
         if form.is_valid():
 
@@ -127,17 +125,14 @@ def wallet(request):
 # method to do new order
 @login_required
 def order_new(request):
-    orders = Order.objects.all()
     wallets = Wallet.objects.all()
     if request.method == "POST":
         form = OrderForm(request.POST)
-        form.profile = request.user
         if form.is_valid():
-            new_order = form.save()
+            new_order = form.save(commit=False)
             new_order.profile = request.user
             new_order = form.save()
             for wallet in wallets:
-                for order in orders:
                     if new_order.choice == 'buy' and new_order.price <= wallet.fiat_budget and \
                             new_order.prenotation == 'False':
                         sell_Order = Order.objects.filter(prenotation='False', choice='sell', order_close=False,
