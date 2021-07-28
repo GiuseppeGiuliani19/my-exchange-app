@@ -42,16 +42,13 @@ def wallet_new(request):
                 wallet_to_delete.delete()
                 return render(request, 'app/error.html')
         if form.is_valid():
-
-            new_wallet = form.save()
+            new_wallet = form.save(commit=False)#commit significa che non voglio che si salvi ancora,devo aggiungere l'autore
             new_wallet.profile = request.user
-            new_wallet = form.save()
-
-            #        form.save()
+            new_wallet.save() #qua ho salvato
         return redirect('response_wallet_executed')
     else:
         form = WalletForm()
-    contex = {'form': form}
+        contex = {'form': form}
     return render(request, 'app/wallet_new.html', contex)
 
 
@@ -129,9 +126,9 @@ def order_new(request):
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
-            new_order = form.save(commit=False)
-            new_order.profile = request.user
-            new_order = form.save()
+            new_order = form.save(commit=False)#vuol dire che ancora non vogliamo salvare il form
+            new_order.profile = request.user  # dico al programma l'utente che farà l'ordine
+            new_order.save() #qua ho cambiato
             for wallet in wallets:
                     if new_order.choice == 'buy' and new_order.price <= wallet.fiat_budget and \
                             new_order.prenotation == 'False':
@@ -157,7 +154,6 @@ def order_new(request):
                                                           order_close=False,
                                                           price__lte=new_order.price,
                                                           choise_crypto=new_order.choise_crypto).first()
-                        #  for order in sell_Order:
                         if sell_Order != None and new_order.prenotation == str(sell_Order.profile):
                             profit_Bitcoin = new_order.quantity
                             profit_Buy = new_order.price
@@ -179,7 +175,6 @@ def order_new(request):
                                                          order_close=False,
                                                          price__gte=new_order.price,
                                                          choise_crypto=new_order.choise_crypto).first()
-                        # for order in buy_Order:
                         if buy_Order != None and new_order.prenotation == str(buy_Order.profile):
                             profit_Sell = buy_Order.price
                             new_order.quantity = -new_order.quantity
@@ -227,6 +222,7 @@ def order_new(request):
             return redirect('response_order_executed')
 
     form = OrderForm()
+
     contex = {'form': form}
     return render(request, 'app/order_new.html', contex)
 
@@ -285,7 +281,6 @@ def profit_or_loss_moneys(request):
                 )
 
     return HttpResponse(response, content_type="text/plain")
-    # return json.dumps(response, indent=4, sort_keys=True, default=str)
 
 
 def profit_or_loss_crypto(request):
@@ -302,5 +297,4 @@ def profit_or_loss_crypto(request):
                         'datetime': order.datetime,
                     }
                 )
-    # return JsonResponse(response, safe=False)
     return HttpResponse(response, content_type="text/plain")
